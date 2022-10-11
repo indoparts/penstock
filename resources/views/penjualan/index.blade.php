@@ -1,4 +1,7 @@
 @extends('layouts.app')
+@section('title')
+Index
+@endsection
 @section('css')
     <!-- Custom styles for this page -->
     <link href="{{ asset('vendor/datatables/dataTables.bootstrap4.min.css') }}" rel="stylesheet">
@@ -13,11 +16,8 @@
     @include('components.navbar')
 @endsection
 @section('content')
-    <!-- Begin Page Content -->
     <div class="container-fluid">
-
-        <!-- DataTales Example -->
-        @if ($message = Session::get('success'))
+        @if ($message = Session::get('status'))
             <div class="alert alert-success">
                 <p>{{ $message }}</p>
             </div>
@@ -32,19 +32,34 @@
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th scope="col" width="1%">#</th>
+                                    <th scope="col" width="15%">Nama Produk</th>
                                     <th scope="col" width="15%">Tgl. Transaksi</th>
                                     <th scope="col">Lembar</th>
                                     <th scope="col" width="10%">Ket</th>
+                                    <th scope="col" width="10%">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $k)
                                     <tr>
-                                        <th scope="row">{{ $k->id }}</th>
-                                        <td>{{ $k->tgl_transaksi }}</td>
+                                        <td>{{ $k->produk->nama_produk }}</td>
+                                        <td>{{ $k->tggl_transaksi }}</td>
                                         <td>{{ $k->lembar }}</td>
                                         <td>{{ $k->ket }}</td>
+                                        <td>
+                                            <a href="{{ url('penjualan/' . $k->id . '/edit') }}"
+                                                class="btn btn-warning btn-sm"><i class="fas fa-edit"></i></a>
+                                            <a class="btn btn-danger btn-sm"
+                                                onclick="event.preventDefault();
+                                                 document.getElementById('delete-form').submit();">
+                                                <i class="fas fa-trash"></i>
+                                            </a>
+                                            <form id="delete-form" action="{{ url('penjualan/' . $k->id) }}" method="POST"
+                                                class="d-none">
+                                                @csrf
+                                                @method('delete')
+                                            </form>
+                                        </td>
                                     </tr>
                                 @endforeach
                             </tbody>
@@ -61,7 +76,6 @@
         </div>
 
     </div>
-    <!-- /.container-fluid -->
 @endsection
 
 @section('js')

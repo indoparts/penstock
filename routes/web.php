@@ -25,4 +25,5 @@ Route::middleware('auth')->group(static function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
     Route::resource('penjualan', DataPenjualanController::class);
     Route::resource('produk', DataProdukController::class);
+    Route::get('perhitungan', [DataProdukController::class, 'perhitungan'])->name('perhitungan');
 });

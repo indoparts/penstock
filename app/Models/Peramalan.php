@@ -9,6 +9,13 @@ class Peramalan extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'data_produk_id',
+        'tahun',
+        'penjualan',
+        'peramalan',
+    ];
+
     public function produk()
     {
         return $this->hasMany(DataProduk::class, 'id', 'data_produk_id');

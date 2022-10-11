@@ -9,6 +9,15 @@ class DataProduk extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'nama_produk',
+        'ukuran',
+        'harga',
+        'stok',
+        'keterangan',
+        'img',
+    ];
+
     public function penjualan()
     {
         return $this->belongsTo(DataPenjualan::class, 'data_produk_id', 'id');

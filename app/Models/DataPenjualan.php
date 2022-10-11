@@ -8,6 +8,12 @@ use Illuminate\Database\Eloquent\Model;
 class DataPenjualan extends Model
 {
     use HasFactory;
+    protected $fillable = [
+        'data_produk_id',
+        'tggl_transaksi',
+        'lembar',
+        'ket',
+    ];
 
     public function produk()
     {

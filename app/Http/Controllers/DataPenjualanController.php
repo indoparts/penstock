@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\DataPenjualan;
+use App\Models\DataProduk;
 use Illuminate\Http\Request;
 
 class DataPenjualanController extends Controller
@@ -14,7 +15,7 @@ class DataPenjualanController extends Controller
      */
     public function index()
     {
-        $data = DataPenjualan::latest()->paginate(10);
+        $data = DataPenjualan::with('produk')->latest()->paginate(10);
         return view('penjualan.index', compact('data'));
     }
 
@@ -25,7 +26,8 @@ class DataPenjualanController extends Controller
      */
     public function create()
     {
-        return view('penjualan.create');
+        $produk = DataProduk::latest()->get();
+        return view('penjualan.create', compact('produk'));
     }
 
     /**
@@ -36,18 +38,19 @@ class DataPenjualanController extends Controller
      */
     public function store(Request $request)
     {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\DataPenjualan  $dataPenjualan
-     * @return \Illuminate\Http\Response
-     */
-    public function show(DataPenjualan $dataPenjualan)
-    {
-        //
+        $request->validate([
+            'data_produk_id' => 'required|numeric',
+            'tggl_transaksi' => 'required|date',
+            'lembar' => 'required|numeric',
+            'ket' => 'required|max:255',
+        ]);
+        $input = $request->all();
+        $input['tggl_transaksi'] = date("Y-m-d", strtotime($input['tggl_transaksi']));
+        $find = DataProduk::find($input['data_produk_id']);
+        if ($find->update(['stok' => $find->stok - $input['lembar']])) {
+            DataPenjualan::create($input);
+            return redirect('penjualan')->with('status', 'Data berhasil ditambahkan');
+        }
     }
 
     /**
@@ -56,9 +59,11 @@ class DataPenjualanController extends Controller
      * @param  \App\Models\DataPenjualan  $dataPenjualan
      * @return \Illuminate\Http\Response
      */
-    public function edit(DataPenjualan $dataPenjualan)
+    public function edit($id)
     {
-        //
+        $data = DataPenjualan::find($id);
+        $produk = DataProduk::latest()->get();
+        return view('penjualan.edit', compact('data', 'produk'));
     }
 
     /**
@@ -68,9 +73,21 @@ class DataPenjualanController extends Controller
      * @param  \App\Models\DataPenjualan  $dataPenjualan
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, DataPenjualan $dataPenjualan)
+    public function update(Request $request, $id)
     {
-        //
+        $request->validate([
+            'data_produk_id' => 'required|numeric',
+            'tggl_transaksi' => 'required|date',
+            'lembar' => 'required|numeric',
+            'ket' => 'required|max:255',
+        ]);
+        $input = $request->all();
+        $input['tggl_transaksi'] = date("Y-m-d", strtotime($input['tggl_transaksi']));
+        $find = DataProduk::find($input['data_produk_id']);
+        if ($find->update(['stok' => $find->stok - $input['lembar']])) {
+            DataPenjualan::find($id)->update($input);
+            return redirect('penjualan')->with('status', 'Data berhasil diperbaharui');
+        }
     }
 
     /**
@@ -79,8 +96,10 @@ class DataPenjualanController extends Controller
      * @param  \App\Models\DataPenjualan  $dataPenjualan
      * @return \Illuminate\Http\Response
      */
-    public function destroy(DataPenjualan $dataPenjualan)
+    public function destroy($id)
     {
-        //
+        $find = DataPenjualan::find($id);
+        $find->delete();
+        return redirect('penjualan')->with('status', 'Data berhasil dihapus');
     }
 }
