@@ -133,58 +133,36 @@ class DataProdukController extends Controller
 
     public function perhitungan()
     {
-        $a = 0.9;
-        $arr = array();
-        $sql2 = DataProduk::get();
-        foreach ($sql2 as $c) {
-            $sql = DB::select("SELECT SUM(lembar) AS jumlah, YEAR(tggl_transaksi) as tahun,MONTH(tggl_transaksi) AS bulan FROM data_penjualans WHERE 
-    data_produk_id=" . $c['id'] . " GROUP BY YEAR(tggl_transaksi),MONTH(tggl_transaksi)");
-            $arrsementara = array();
-            $periode = array();
-            foreach ($sql as $row) {
-                array_push($arrsementara, $row->jumlah); // menginput data penjualan per bulan kedalam array untuk proses perhitungan selanjutnya
-                array_push($periode, $row->tahun . '-' . $row->bulan . '-01');
-                $bulan = $row->bulan;
-                $tahun = $row->tahun;
+        $produk = DataProduk::get();
+        $peramalan = array(
+            'penjualan'=>[],
+            'peramalan'=>[],
+        );
+        foreach ($produk as $key) {
+            $q=DB::select("SELECT SUM(lembar) AS jumlah, YEAR(tggl_transaksi) as tahun,MONTH(tggl_transaksi) AS bulan FROM data_penjualans WHERE 
+            data_produk_id='".$key['id']."' GROUP BY YEAR(tggl_transaksi),MONTH(tggl_transaksi)");
+            $q_array = array();
+            foreach ($q as $k) {
+                array_push($q_array, $k->jumlah);
             }
-            $dataramal = array('0', $arrsementara[0]);
-            Peramalan::create([
-                'data_produk_id' => $c['id'],
-                'tahun' => $periode[0],
-                'penjualan' => 0,
-                'peramalan' => 0,
-            ]);
-            // Peramalan::create([
-            //     'data_produk_id' => $c['id'],
-            //     'tahun' => $periode[1],
-            //     'penjualan' => $arrsementara[0],
-            //     'peramalan' => $arrsementara[0],
-            // ]);
-            if (count($arrsementara) > 1) {
-                $error = array($arrsementara[1] - $arrsementara[0]);
-                $error2 = array(pow($error[0], 2));  // menghitung nilai error^2 perbulan
-            }
-            $ramal = $arrsementara[0];
-            for ($i = 2; $i <= count($arrsementara); $i++) {
-                $x1 = $arrsementara[$i - 1];  //mendapatkan nilai penjualan bulan 3 dan seterusnya
-                $ramal = $a * $x1 + (1 - $a) * $ramal; // perhitungan nilai peramalan bulan 3 dan seterusnya berdasarkan metode
-                array_push($dataramal, $ramal);
-                Peramalan::create([
-                    'data_produk_id' => $c['id'],
-                    'tahun' => $periode[$i],
-                    'penjualan' => $$ramal,
-                    'peramalan' => $$ramal,
+            // Langkah ke 1
+            $a = 2/(count($q_array)+1); //menentukan koefisien α, dengan rumus α =(2/n+1)
+            //Langkah ke 2
+            $sumarr = array_sum($q_array); //hitung total keseluruhan permintaan
+            $f1=$sumarr/count($q_array);
+            //Langkah ke 3 yakni menghitung nilai peramalan di keseluruhan periode
+            for ($i=0; $i < count($q_array); $i++) { 
+                ${'f'.($i+2)} = ${'f'.($i+1)} + $a * ($q_array[$i]-${'f'.($i+1)});
+                array_push($peramalan['penjualan'], [
+                    'produk'=>$key['nama_produk'],
+                    'penjualan'=>round(${'f'.($i+1)})
                 ]);
-                if ($i < count($arrsementara)) {
-                    $err = $arrsementara[$i] - $ramal;
-                    $err2 = pow($err, 2); //menghitung nilai error^2 perbulan
-                    array_push($error, $err); //simpan nilai error ke array
-                    array_push($error2, $err2); //simpan nilai error^2 ke array
-                }
             }
-            // $jml_err = array_sum($error2);
-            // $rmse = pow(($jml_err / (count($arrsementara) - 1)), 0.5);
+            array_push($peramalan['peramalan'], [
+                'produk'=>$key['nama_produk'],
+                'pembelian'=>ceil(round(${'f'.(count($q_array)+1)}))
+            ]);
         }
-        return view('peramalan.index', compact('c', 'dataramal'));
+        return view('peramalan.index', compact('peramalan'));
     }
 }

@@ -24,8 +24,14 @@ Update
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary">Form ubah data produk</h6>
             </div>
-            @if ($message = Session::get('status'))
+            @if ($message = Session::get('success'))
                 <div class="alert alert-success alert-block">
+                    <button type="button" class="close" data-dismiss="alert">×</button>
+                    <strong>{{ $message }}</strong>
+                </div>
+            @endif
+            @if ($message = Session::get('error'))
+                <div class="alert alert-danger alert-block">
                     <button type="button" class="close" data-dismiss="alert">×</button>
                     <strong>{{ $message }}</strong>
                 </div>

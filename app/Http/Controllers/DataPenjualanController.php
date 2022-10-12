@@ -47,10 +47,13 @@ class DataPenjualanController extends Controller
         $input = $request->all();
         $input['tggl_transaksi'] = date("Y-m-d", strtotime($input['tggl_transaksi']));
         $find = DataProduk::find($input['data_produk_id']);
-        if ($find->update(['stok' => $find->stok - $input['lembar']])) {
-            DataPenjualan::create($input);
-            return redirect('penjualan')->with('status', 'Data berhasil ditambahkan');
+        if ($input['lembar'] <= $find->stok) {
+            if ($find->update(['stok' => $find->stok - $input['lembar']])) {
+                DataPenjualan::create($input);
+                return redirect('penjualan/create')->with('success', 'Data berhasil ditambahkan');
+            }
         }
+        return redirect('penjualan/create')->with('error', 'Data gagal ditambahkan, jumlah yang dipesan melebihi jumlah stok persediaan.');
     }
 
     /**
@@ -84,10 +87,13 @@ class DataPenjualanController extends Controller
         $input = $request->all();
         $input['tggl_transaksi'] = date("Y-m-d", strtotime($input['tggl_transaksi']));
         $find = DataProduk::find($input['data_produk_id']);
-        if ($find->update(['stok' => $find->stok - $input['lembar']])) {
-            DataPenjualan::find($id)->update($input);
-            return redirect('penjualan')->with('status', 'Data berhasil diperbaharui');
+        if ($input['lembar'] <= $find->stok) {
+            if ($find->update(['stok' => $find->stok - $input['lembar']])) {
+                DataPenjualan::find($id)->update($input);
+                return redirect('penjualan/create')->with('success', 'Data berhasil diperbaharui');
+            }
         }
+        return redirect('penjualan/create')->with('error', 'Data gagal ditambahkan, jumlah yang dipesan melebihi jumlah stok persediaan.');
     }
 
     /**
