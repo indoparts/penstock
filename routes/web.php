@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\DataPenjualanController;
 use App\Http\Controllers\DataProdukController;
+use App\Http\Controllers\PeramalanController;
+use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -23,7 +25,9 @@ Route::get('/', function () {
 Auth::routes();
 Route::middleware('auth')->group(static function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+    Route::resource('users', UserController::class);
     Route::resource('penjualan', DataPenjualanController::class);
     Route::resource('produk', DataProdukController::class);
-    Route::get('perhitungan', [DataProdukController::class, 'perhitungan'])->name('perhitungan');
+    Route::get('perhitungan', [PeramalanController::class, 'perhitungan'])->name('perhitungan');
+    Route::get('perhitungan-export', [PeramalanController::class, 'export'])->name('perhitungan_export');
 });
