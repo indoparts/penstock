@@ -14,9 +14,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $data = User::latest()->simplePaginate(10);
+        $data = User::latest()->simplePaginate(5);
         if (request()->has('cari')) {
-            $data = User::where('name', 'like', request()->cari)->simplePaginate(10);
+            $data = User::where('name', 'like', request()->cari)->simplePaginate(5);
         }
         return view('users.index', compact('data'));
     }

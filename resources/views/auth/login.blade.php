@@ -1,5 +1,7 @@
 @extends('layouts.app')
-
+@section('title')
+Login
+@endsection
 @section('content')
     <!-- Outer Row -->
     <div class="row justify-content-center">
@@ -53,10 +55,6 @@
                                         Login
                                     </button>
                                 </form>
-                                <hr>
-                                <div class="text-center">
-                                    <a class="small" href="{{ route('password.request') }}">Forgot Password?</a>
-                                </div>
                             </div>
                         </div>
                     </div>
