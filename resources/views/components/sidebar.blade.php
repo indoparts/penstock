@@ -19,7 +19,7 @@
     </li>
     <li class="nav-item">
         <a class="nav-link" href="{{ Route('perhitungan') }}">
-            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <i class="fas fa-cash-register"></i>
             <span>Peramalan</span></a>
     </li>
 
