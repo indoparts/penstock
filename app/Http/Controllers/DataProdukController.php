@@ -41,11 +41,11 @@ class DataProdukController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nama_produk' => 'required|unique:data_produks|max:100',
-            'ukuran' => 'required|max:20',
+            'code' => 'required|unique:data_produks|max:10',
+            'nama_produk' => 'required|max:100',
+            'type' => 'required|max:100',
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
-            'keterangan' => 'required|max:255',
             'img' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
         ]);
         try {
@@ -84,11 +84,11 @@ class DataProdukController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'nama_produk' => 'required|max:100|unique:data_produks,nama_produk,' . $id,
-            'ukuran' => 'required|max:20',
+            'code' => 'required|max:100|unique:data_produks,code,' . $id,
+            'nama_produk' => 'required|max:100',
+            'type' => 'required|max:100',
             'harga' => 'required|numeric',
             'stok' => 'required|numeric',
-            'keterangan' => 'required|max:255',
             'img' => 'mimes:jpeg,jpg,png,gif|required|max:10000',
         ]);
         try {

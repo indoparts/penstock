@@ -33,15 +33,20 @@ Create
                 <form action="{{ route('produk.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <div class="form-row">
-                        <div class="form-group col-md-6">
+                        <div class="form-group col-md-4">
                             <label for="inputEmail4">Nama Produk</label>
                             <input type="text" class="form-control @error('nama_produk') is-invalid @enderror"
                                 name="nama_produk" required value="{{ old('nama_produk') }}">
                         </div>
-                        <div class="form-group col-md-6">
-                            <label for="inputPassword4">Ukuran</label>
-                            <input type="text" class="form-control @error('ukuran') is-invalid @enderror" name="ukuran"
-                                required value="{{ old('ukuran') }}">
+                        <div class="form-group col-md-4">
+                            <label for="inputPassword4">Kode Produk</label>
+                            <input type="text" class="form-control @error('code') is-invalid @enderror" name="code"
+                                required value="{{ old('code') }}">
+                        </div>
+                        <div class="form-group col-md-4">
+                            <label for="inputEmail4">Type Produk</label>
+                            <input type="text" class="form-control @error('type') is-invalid @enderror"
+                                name="type" required value="{{ old('type') }}">
                         </div>
                     </div>
                     <div class="form-row">
@@ -60,11 +65,6 @@ Create
                             <input type="file" class="form-control @error('img') is-invalid @enderror" name="img"
                                 required>
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputAddress2">Keterangan</label>
-                        <textarea name="keterangan" id="" cols="30" rows="10"
-                            class="form-control @error('keterangan') is-invalid @enderror" value="{{ old('keterangan') }}"></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>

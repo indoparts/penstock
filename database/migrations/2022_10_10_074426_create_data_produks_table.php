@@ -15,11 +15,11 @@ return new class extends Migration
     {
         Schema::create('data_produks', function (Blueprint $table) {
             $table->id();
+            $table->string('code')->unique();
             $table->string('nama_produk', 100);
-            $table->string('ukuran', 20);
+            $table->string('type', 50);
             $table->double('harga');
             $table->integer('stok');
-            $table->longText('keterangan');
             $table->string('img');
             $table->timestamps();
         });

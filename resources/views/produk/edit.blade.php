@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('title')
-update
+    update
 @endsection
 @section('css')
     <!-- Custom styles for this page -->
@@ -35,25 +35,37 @@ update
                     @csrf
                     @method('patch')
                     <div class="form-row">
-                        <div class="form-group col-md-6">
-                            <label for="inputEmail4">Nama Produk</label>
-                            <input type="text" class="form-control @error('nama_produk') is-invalid @enderror"
-                                name="nama_produk" required value="{{ $data->nama_produk }}">
-                            @error('nama_produk')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
-                        </div>
-                        <div class="form-group col-md-6">
-                            <label for="inputPassword4">Ukuran</label>
-                            <input type="text" class="form-control @error('ukuran') is-invalid @enderror" name="ukuran"
-                                required value="{{ $data->ukuran }}">
-                            @error('ukuran')
-                                <span class="invalid-feedback" role="alert">
-                                    <strong>{{ $message }}</strong>
-                                </span>
-                            @enderror
+                        <div class="form-row">
+                            <div class="form-group col-md-4">
+                                <label for="inputEmail4">Nama Produk</label>
+                                <input type="text" class="form-control @error('nama_produk') is-invalid @enderror"
+                                    name="nama_produk" required value="{{ $data->nama_produk }}">
+                                @error('nama_produk')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputPassword4">Kode Produk</label>
+                                <input type="text" class="form-control @error('code') is-invalid @enderror"
+                                    name="code" required value="{{ $data->code }}">
+                                @error('code')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group col-md-4">
+                                <label for="inputEmail4">Type Produk</label>
+                                <input type="text" class="form-control @error('type') is-invalid @enderror"
+                                    name="type" required value="{{ $data->type }}">
+                                @error('type')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                         </div>
                     </div>
                     <div class="form-row">
@@ -91,16 +103,6 @@ update
                             <img src="{{ asset('img/produk/' . $data->img) }}" class="rounded" alt="{{ $data->img }}"
                                 width="50%">
                         </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="inputAddress2">Keterangan</label>
-                        <textarea name="keterangan" id="" cols="30" rows="10"
-                            class="form-control @error('keterangan') is-invalid @enderror">{{ $data->keterangan }}</textarea>
-                        @error('keterangan')
-                            <span class="invalid-feedback" role="alert">
-                                <strong>{{ $message }}</strong>
-                            </span>
-                        @enderror
                     </div>
                     <button type="submit" class="btn btn-primary">Submit</button>
                 </form>

@@ -34,16 +34,16 @@ Index
                                 <tr>
                                     <th scope="col" width="15%">Nama Produk</th>
                                     <th scope="col" width="15%">Tgl. Transaksi</th>
-                                    <th scope="col">Lembar</th>
-                                    <th scope="col" width="10%">Ket</th>
-                                    <th scope="col" width="10%">#</th>
+                                    <th scope="col">QTY</th>
+                                    <th scope="col">Ket</th>
+                                    <th scope="col" width="20%">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($data as $k)
                                     <tr>
-                                        <td>{{ $k->produk->nama_produk }}</td>
-                                        <td>{{ $k->tggl_transaksi }}</td>
+                                        <th>{{ $k->produk->nama_produk }}</th>
+                                        <th>{{ $k->tggl_transaksi }}</th>
                                         <td>{{ $k->lembar }}</td>
                                         <td>{{ $k->ket }}</td>
                                         <td>

@@ -10,11 +10,11 @@ class DataProduk extends Model
     use HasFactory;
 
     protected $fillable = [
+        'code',
         'nama_produk',
-        'ukuran',
+        'type',
         'harga',
         'stok',
-        'keterangan',
         'img',
     ];
 

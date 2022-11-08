@@ -49,11 +49,11 @@ Index
                         <table class="table table-striped">
                             <thead>
                                 <tr>
+                                    <th scope="col" width="1%">Kode Produk</th>
                                     <th scope="col" width="1%">Nama Produk</th>
-                                    <th scope="col" width="1%">Ukuran</th>
+                                    <th scope="col" width="1%">Type</th>
                                     <th scope="col" width="1%">Harga</th>
                                     <th scope="col" width="1%">Stok</th>
-                                    <th scope="col" width="1%">Keterangan</th>
                                     <th scope="col" width="1%">Gambar</th>
                                     <th scope="col" width="1%">#</th>
                                 </tr>
@@ -61,11 +61,11 @@ Index
                             <tbody>
                                 @foreach ($data as $k)
                                     <tr>
-                                        <th scope="row">{{ $k->nama_produk }}</th>
-                                        <td>{{ $k->ukuran }}</td>
+                                        <th>{{ $k->code }}</th>
+                                        <td>{{ $k->nama_produk }}</td>
+                                        <td>{{ $k->type }}</td>
                                         <td>{{ $k->harga }}</td>
                                         <td>{{ $k->stok }}</td>
-                                        <td>{{ $k->keterangan }}</td>
                                         <td>
                                             <div class="text-center">
                                                 <img src="{{ asset('img/produk/' . $k->img) }}" class="rounded"

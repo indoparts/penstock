@@ -5,7 +5,7 @@
         <div class="sidebar-brand-icon rotate-n-15">
             <i class="fas fa-laugh-wink"></i>
         </div>
-        <div class="sidebar-brand-text mx-3">SB Admin <sup>2</sup></div>
+        <div class="sidebar-brand-text">Raden Cell<sup>Shop</sup></div>
     </a>
 
     <!-- Divider -->
@@ -16,6 +16,11 @@
         <a class="nav-link" href="{{ Route('home') }}">
             <i class="fas fa-fw fa-tachometer-alt"></i>
             <span>Dashboard</span></a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ Route('perhitungan') }}">
+            <i class="fas fa-fw fa-tachometer-alt"></i>
+            <span>Peramalan</span></a>
     </li>
 
     <!-- Divider -->
