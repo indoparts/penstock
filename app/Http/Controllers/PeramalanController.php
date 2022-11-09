@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Peramalan;
+use Illuminate\Http\Request;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Illuminate\Support\Facades\DB;
@@ -18,7 +18,35 @@ class PeramalanController extends Controller
     public function perhitungan()
     {
         $produk = DataProduk::get();
+        if (empty(session('parameter_a')) && empty(session('parameter_x'))) {
+            session(['parameter_a' => 0.1]);
+            session(['parameter_x' => 0.9]);
+        }
         return view('peramalan.index', compact('produk'));
+    }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function setup_a(Request $request)
+    {
+        $request->validate([
+            'parameter_a' => 'required|numeric',
+        ]);
+        $input = $request->all();
+        session(['parameter_a' => $input['parameter_a']]);
+        return redirect('perhitungan')->with('success_setup_param_a', 'Parameter a berhasil disetup');
+    }
+    public function setup_x(Request $request)
+    {
+        $request->validate([
+            'parameter_x' => 'required|numeric',
+        ]);
+        $input = $request->all();
+        session(['parameter_x' => $input['parameter_x']]);
+        return redirect('perhitungan')->with('success_setup_param_x', 'Parameter x berhasil disetup');
     }
 
     /**
@@ -46,10 +74,10 @@ class PeramalanController extends Controller
                 array_push($x2, $x * $peramln[$i]);
                 array_push($peramln, round($x1[$i] + $x2[$i]));
                 array_push($peramalan, [
-                    'nama_produk'=>$key->nama_produk,
-                    'tahun'=>$q[$i]->tahun,
-                    'penjualan'=>$q[$i]->jumlah,
-                    'peramalan'=>count($peramln) > 0 ? $peramln[$i+1] : 0,
+                    'nama_produk' => $key->nama_produk,
+                    'tahun' => $q[$i]->tahun,
+                    'penjualan' => $q[$i]->jumlah,
+                    'peramalan' => count($peramln) > 0 ? $peramln[$i + 1] : 0,
                 ]);
             }
         }

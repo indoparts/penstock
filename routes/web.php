@@ -29,5 +29,7 @@ Route::middleware('auth')->group(static function () {
     Route::resource('penjualan', DataPenjualanController::class);
     Route::resource('produk', DataProdukController::class);
     Route::get('perhitungan', [PeramalanController::class, 'perhitungan'])->name('perhitungan');
+    Route::post('setup_a', [PeramalanController::class, 'setup_a'])->name('setup_a');
+    Route::post('setup_x', [PeramalanController::class, 'setup_x'])->name('setup_x');
     Route::get('perhitungan-export', [PeramalanController::class, 'export'])->name('perhitungan_export');
 });
