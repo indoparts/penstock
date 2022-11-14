@@ -82,9 +82,16 @@
                     @php
                         $q = DB::select(
                             "SELECT SUM(lembar) AS jumlah, YEAR(tggl_transaksi) as tahun, MONTH(tggl_transaksi) AS bulan FROM data_penjualans WHERE 
-                            data_produk_id='" .$value->id . "' AND YEAR(tggl_transaksi)=".date('Y')." GROUP BY YEAR(tggl_transaksi),MONTH(tggl_transaksi)",
+                            data_produk_id='" .
+                                $value->id .
+                                "' AND YEAR(tggl_transaksi)=" .
+                                date('Y') .
+                                ' GROUP BY YEAR(tggl_transaksi),MONTH(tggl_transaksi)',
                         );
                         $peramln = [];
+                        $mad = [];
+                        $mse = [];
+                        $mape = [];
                         $x1 = [];
                         $x2 = [];
                     @endphp
@@ -94,9 +101,12 @@
                                 <th colspan="3">{{ $value->nama_produk }}/{{ $value->code }}</th>
                             </tr>
                             <tr>
-                                <th>Data</th>
-                                <th>Peramalan</th>
-                                <th>Calculate</th>
+                                <th width="10%">Data</th>
+                                <th width="2%">F</th>
+                                <th width="30%">Calculate</th>
+                                <th>MAD</th>
+                                <th>MSE</th>
+                                <th>MAPE</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -110,6 +120,9 @@
                                     array_push($x1, $a * $q[$i]->jumlah);
                                     array_push($x2, $x * $peramln[$i]);
                                     array_push($peramln, round($x1[$i] + $x2[$i]));
+                                    array_push($mad, $q[$i]->jumlah - $peramln[$i]);
+                                    array_push($mse, ($q[$i]->jumlah - $peramln[$i])*($q[$i]->jumlah - $peramln[$i]));
+                                    array_push($mape, ($q[$i]->jumlah - $peramln[$i]) / $q[$i]->jumlah);
                                     $cek = DB::select("SELECT count(data_produk_id) AS totalcount FROM peramalans WHERE data_produk_id='" . $value->id . "' AND YEAR(tahun)=" . date('Y') . '');
                                     if ($cek[0]->totalcount < count($q)) {
                                         DB::table('peramalans')->insert([
@@ -121,7 +134,7 @@
                                             'updated_at' => date('Y-m-d H:i:s'),
                                         ]);
                                     }
-                                    switch ((int)$q[$i]->bulan) {
+                                    switch ((int) $q[$i]->bulan) {
                                         case 1:
                                             $bulan = 'Januari';
                                             break;
@@ -158,32 +171,44 @@
                                         case 12:
                                             $bulan = 'Desember';
                                             break;
-                                        
+                                    
                                         default:
-                                        $bulan = '-';
+                                            $bulan = '-';
                                             break;
                                     }
                                 @endphp
                                 <tr>
                                     <td>
-                                        <p><strong>Date :</strong>{{ $q[$i]->tahun }}/{{ $bulan }}</p>
-                                        <p><strong>Jumlah :</strong>{{ $q[$i]->jumlah }}</p>
+                                        <p><strong>{{ $q[$i]->tahun }}/{{ $bulan }}</strong></p>
+                                        <p><strong>Penjualan : </strong><strong class="text-danger">{{ $q[$i]->jumlah }}</strong></p>
                                     </td>
                                     <td>
                                         @if ($i == 0)
                                             <strong>-</strong>
                                         @else
-                                            <strong>{{ count($peramln) > 0 ? $peramln[$i] : 0 }}</strong>
+                                            <strong class="text-danger">{{ count($peramln) > 0 ? $peramln[$i] : 0 }}</strong>
                                         @endif
                                     </td>
                                     <td>
-                                        <p><strong>F{{ $i + 2 }} = a x i + ( i - a ) F{{ $i + 1 }}</strong>
-                                        </p>
-                                        <p><strong>= ({{ $a }} x {{ $q[$i]->jumlah }}) + ({{ $x }}
-                                                x
-                                                {{ $peramln[$i] }})</strong></p>
-                                        <p><strong>= {{ $x1[$i] }} + {{ $x2[$i] }}</strong></p>
-                                        <p><strong>= {{ $peramln[$i + 1] }}</strong></p>
+                                        <strong>F{{ $i + 2 }} = a x i + ( i - a )
+                                            F{{ $i + 1 }}</strong><br />
+                                        <strong>= ({{ $a }} x {{ $q[$i]->jumlah }}) + ({{ $x }}
+                                            x
+                                            {{ $peramln[$i] }})</strong><br />
+                                        <strong>= {{ $x1[$i] }} + {{ $x2[$i] }}</strong><br />
+                                        <strong>= </strong><strong class="text-danger">{{ $peramln[$i + 1] }}</strong>
+                                    </td>
+                                    <td>
+                                        <strong>= {{ $q[$i]->jumlah }} - {{ $peramln[$i] }}</strong><br/>
+                                        <strong>= </strong><strong class="text-danger">{{ $mad[$i] }}</strong>
+                                    </td>
+                                    <td>
+                                        <strong>= ({{ $q[$i]->jumlah }} - {{ $peramln[$i] }})<sup>2</sup></strong><br/>
+                                        <strong>= </strong><strong class="text-danger">{{ $mse[$i] }}</strong>
+                                    </td>
+                                    <td>
+                                        <strong>= ({{ $q[$i]->jumlah }} - {{ $peramln[$i] }}) / {{ $q[$i]->jumlah }}</strong><br/>
+                                        <strong>= </strong><strong class="text-danger">{{ $mape[$i] }}</strong>
                                     </td>
                                 </tr>
                             @endfor
@@ -191,8 +216,12 @@
                                 <td colspan="3">
                                     @if (count($peramln) > 0)
                                         Diketahui untuk peramalan persediaan stok barang
-                                        <strong class="text-danger">{{ $value->nama_produk }}/{{ $value->code }}</strong> dibulan berikutnya
+                                        <strong class="text-danger">{{ $value->nama_produk }}/{{ $value->code }}</strong>
+                                        dibulan berikutnya
                                         adalah <strong class="text-danger">{{ end($peramln) }}</strong>.
+                                        <br/> Rata-rata <strong>MAD = {{ array_sum($mad) }}:{{ count($mad)-1 }}=</strong><strong class="text-danger">{{ array_sum($mad)/(count($mad)-1) }}</strong>
+                                        <br/> Rata-rata <strong>MSE = {{ array_sum($mse) }}:{{ count($mad)-1 }}=</strong><strong class="text-danger">{{ array_sum($mse)/(count($mad)-1) }}</strong>
+                                        <br/> Rata-rata <strong>MAPE = {{ array_sum($mape) }}:{{ count($mad)-1 }}=</strong><strong class="text-danger">{{ array_sum($mape)/(count($mad)-1) }}</strong>
                                     @endif
                                 </td>
                             </tr>
